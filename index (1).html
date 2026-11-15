@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e6b62">
+<title>Kumpi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f3f5ef; --surface:#ffffff; --ink:#15231f; --muted:#5d6b66; --line:#dce2d9;
+  --lake:#0e6b62; --on-lake:#ffffff; --gold:#f0b232; --hib:#d2403a;
+  --display:"Bricolage Grotesque","Trebuchet MS",sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#0f1a18; --surface:#172624; --ink:#ecf1ea; --muted:#9aaaa3; --line:#2a3b38;
+    --lake:#3fb5a6; --on-lake:#06201c; --gold:#f0b232; --hib:#ef6a60; color-scheme:dark;}
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{opacity:.55;cursor:default}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.app{height:100%;max-width:440px;margin:0 auto;display:flex;flex-direction:column;background:var(--paper);position:relative;overflow:hidden}
+header{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--surface)}
+.logo{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:-.03em;color:var(--lake)}
+.logo i{font-style:normal;color:var(--gold)}
+h1{font-family:var(--display);font-weight:800;font-size:22px;letter-spacing:-.02em;margin:0;text-wrap:balance}
+main{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;min-height:0}
+nav{display:flex;border-top:1px solid var(--line);background:var(--surface)}
+nav button{flex:1;background:none;border:0;padding:12px 4px 14px;font-weight:700;color:var(--muted);border-top:3px solid transparent}
+nav button[aria-current="page"]{color:var(--lake);border-top-color:var(--lake)}
+.count{display:inline-block;min-width:20px;padding:0 6px;margin-left:4px;border-radius:99px;background:var(--hib);color:#fff;font-size:12px;line-height:20px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column}
+.photo{width:100%;height:300px;object-fit:cover;display:block}
+.noph{display:flex;align-items:center;justify-content:center;background:var(--lake);color:var(--on-lake);font-family:var(--display);font-weight:800;font-size:96px}
+.who{padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px}
+.name{font-family:var(--display);font-weight:800;font-size:34px;line-height:1;letter-spacing:-.03em;overflow-wrap:anywhere}
+.name small{font-weight:500;font-size:24px;color:var(--muted)}
+.near{font-weight:700;color:var(--lake)}
+.row{display:flex;gap:10px}
+.btn{flex:1;border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:13px 12px;font-weight:700}
+.btn.go{background:var(--lake);border-color:var(--lake);color:var(--on-lake)}
+.btn.like{background:var(--hib);border-color:var(--hib);color:#fff}
+.btn.danger{color:var(--hib)}
+.muted{color:var(--muted);font-size:14px;margin:0}
+.list{display:flex;flex-direction:column;gap:8px}
+.item{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 12px}
+.av{width:48px;height:48px;border-radius:50%;flex:none;object-fit:cover}
+.av.noph{font-size:22px}
+.av.sm{width:38px;height:38px}
+.av.sm.noph{font-size:18px}
+.item strong{display:block}
+.item p{margin:0;color:var(--muted);font-size:14px;overflow-wrap:anywhere}
+.chathead{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-bottom:1px solid var(--line)}
+.icon{border:0;background:none;font-size:22px;padding:6px 10px;border-radius:10px;font-weight:700}
+.msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-height:0}
+.m{max-width:80%;padding:9px 13px;border-radius:16px;background:var(--surface);border:1px solid var(--line);align-self:flex-start;overflow-wrap:anywhere;white-space:pre-wrap}
+.m.me{align-self:flex-end;background:var(--lake);border-color:var(--lake);color:var(--on-lake)}
+.m.sys{align-self:center;background:none;border:0;color:var(--muted);font-size:13px;text-align:center}
+.send{display:flex;gap:8px;padding:10px 12px;background:var(--surface);border-top:1px solid var(--line)}
+input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--paper)}
+textarea{resize:vertical;min-height:84px}
+.send input{flex:1}
+.send .btn{flex:none}
+label{font-weight:700;font-size:14px;display:flex;flex-direction:column;gap:6px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.rule{display:flex;gap:10px;align-items:flex-start}
+.rule::before{content:"";flex:none;width:10px;height:10px;margin-top:6px;border-radius:50%;background:var(--lake)}
+.rule p{margin:0}
+.veil{position:absolute;inset:0;background:rgba(8,16,14,.62);display:flex;align-items:flex-end;z-index:5}
+.sheet{width:100%;background:var(--surface);border-radius:22px 22px 0 0;padding:20px 16px 22px;display:flex;flex-direction:column;gap:12px;max-height:92%;overflow-y:auto}
+.matchname{font-family:var(--display);font-weight:800;font-size:40px;line-height:1;letter-spacing:-.03em;color:var(--hib);overflow-wrap:anywhere}
+.err{color:var(--hib);font-weight:700;font-size:14px;margin:0}
+.toast{position:absolute;left:16px;right:16px;bottom:74px;background:var(--ink);color:var(--paper);padding:11px 14px;border-radius:12px;font-weight:500;z-index:9;text-align:center}
+.welcome{flex:1;display:flex;flex-direction:column;justify-content:center;gap:16px;padding:24px 20px}
+.welcome .logo{font-size:64px;line-height:1}
+.welcome h1{font-size:28px}
+.preview{width:96px;height:96px;border-radius:18px;object-fit:cover}
+</style>
+</head>
+<body>
+<div class="app" id="app"><div class="welcome"><span class="logo">kumpi<i>.</i></span><p class="muted">Loading</p></div></div>
+<script>
+window.kumpiStarted=false;
+setTimeout(function(){
+  if(window.kumpiStarted)return;
+  var where=location.protocol==='https:'?'Check your internet connection and reload the page.':'This file only works from its web address, not when opened from the chat or from your downloads.';
+  document.getElementById('app').innerHTML='<div class="welcome"><span class="logo">kumpi<i>.</i></span><h1>The app could not start</h1><p class="muted">'+where+'</p></div>';
+},8000);
+</script>
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {getFirestore,doc,getDoc,setDoc,updateDoc,deleteDoc,addDoc,getDocs,collection,query,where,limit,orderBy,limitToLast,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ---- Your Firebase project ---- */
+const firebaseConfig={
+  apiKey:"AIzaSyB9H3EchsFRU37UGR3Zy7bQ6hWzevahifI",
+  authDomain:"kumpi-8d8f3.firebaseapp.com",
+  projectId:"kumpi-8d8f3",
+  messagingSenderId:"275703013756",
+  storageBucket:"kumpi-8d8f3.firebasestorage.app"
+};
+
+const DIST=['Kampala','Wakiso','Mukono','Jinja','Entebbe','Masaka','Mbarara','Kabale','Fort Portal','Hoima','Gulu','Lira','Arua','Soroti','Mbale','Tororo','Other'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const PHOTO_OK=/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/;
+
+let auth,db,me=null,prof=null;
+let view='load',tab='near',sheet=null,err='',busy=false;
+let deck=[],deckLoading=false,matches=[],blocked=[],seen=[],chat=null,msgs=[];
+let draft=null,unsubMatches=null,unsubChat=null,toastMsg='',toastT=null;
+const people=new Map();
+
+function toast(t){toastMsg=t;clearTimeout(toastT);toastT=setTimeout(()=>{toastMsg='';const e=document.querySelector('.toast');if(e)e.remove();},3200);render();}
+function loadSeen(){try{seen=JSON.parse(localStorage.getItem('kumpi_seen_'+me.uid)||'[]');}catch(e){seen=[];}}
+function markSeen(id){if(!seen.includes(id))seen.push(id);try{localStorage.setItem('kumpi_seen_'+me.uid,JSON.stringify(seen));}catch(e){}}
+function age(p){return p.birthYear?new Date().getFullYear()-p.birthYear:'';}
+function km(p){
+  if(prof.lat==null||p.lat==null)return null;
+  const R=6371,r=x=>x*Math.PI/180,dLa=r(p.lat-prof.lat),dLo=r(p.lng-prof.lng);
+  const a=Math.sin(dLa/2)**2+Math.cos(r(prof.lat))*Math.cos(r(p.lat))*Math.sin(dLo/2)**2;
+  return 2*R*Math.asin(Math.sqrt(a));
+}
+function nearTxt(p){const d=km(p);if(d==null)return esc(p.district);return (d<3?'Under 3 km away':'About '+Math.round(d)+' km away')+', '+esc(p.district);}
+function pic(p,cls){return PHOTO_OK.test(p.photo||'')?`<img class="${cls}" src="${p.photo}" alt="">`:`<span class="${cls} noph">${esc((p.name||'?').charAt(0).toUpperCase())}</span>`;}
+const other=m=>m.users.find(u=>u!==me.uid);
+const person=id=>people.get(id)||{id,name:'...',district:''};
+
+/* ---------- views ---------- */
+function vWelcome(){
+  return `<div class="welcome"><span class="logo">kumpi<i>.</i></span><h1>Meet people near you in Uganda</h1>
+  <p class="muted">Like someone, and if they like you back you can chat. Your phone number and exact location stay private.</p>
+  ${err?`<p class="err">${esc(err)}</p>`:''}
+  <button class="btn go" data-act="signin" ${busy?'disabled':''}>Continue with Google</button>
+  <p class="muted">Kumpi is for adults. By continuing you confirm you are 18 or older.</p></div>`;
+}
+function vConfig(){
+  return `<div class="welcome"><span class="logo">kumpi<i>.</i></span><h1>Setup is not finished</h1><p class="muted">The Web API key has not been added to this file yet.</p></div>`;
+}
+function vSetup(){
+  const d=draft,editing=!!prof;
+  const opt=(v,l,cur)=>`<option value="${v}"${cur===v?' selected':''}>${l}</option>`;
+  return `<header><span class="logo">kumpi<i>.</i></span></header><main><form class="panel" id="setup">
+  <h1>${editing?'Edit your profile':'Create your profile'}</h1>
+  <label for="f-name">First name<input id="f-name" maxlength="24" value="${esc(d.name)}" autocomplete="given-name"></label>
+  ${editing?'':`<label for="f-dob">Date of birth<input id="f-dob" type="date" value="${esc(d.dob)}"></label><p class="muted">Only your age is shown. You must be 18 or older.</p>`}
+  <label for="f-gender">I am a<select id="f-gender">${opt('w','Woman',d.gender)}${opt('m','Man',d.gender)}</select></label>
+  <label for="f-seeking">Show me<select id="f-seeking">${opt('w','Women',d.seeking)}${opt('m','Men',d.seeking)}</select></label>
+  <label for="f-district">District<select id="f-district">${DIST.map(x=>opt(x,x,d.district)).join('')}</select></label>
+  <label for="f-bio">About you<textarea id="f-bio" maxlength="300" placeholder="Work, interests, what you are looking for">${esc(d.bio)}</textarea></label>
+  <label for="f-photo">Your photo<input id="f-photo" type="file" accept="image/*"></label>
+  ${PHOTO_OK.test(d.photo||'')?`<img class="preview" src="${d.photo}" alt="Your photo">`:''}
+  ${err?`<p class="err">${esc(err)}</p>`:''}
+  <div class="row">${editing?'<button class="btn" type="button" data-act="canceledit">Cancel</button>':''}<button class="btn go" type="submit" ${busy?'disabled':''}>${busy?'Saving':'Save profile'}</button></div>
+  </form></main>`;
+}
+function vNear(){
+  let body;
+  if(deckLoading)body=`<div class="panel"><p class="muted">Finding people near you</p></div>`;
+  else if(!deck.length)body=`<div class="panel"><h1>Nobody new right now</h1><p class="muted">New people appear here as they join. Invite friends so there are more people nearby.</p><div class="row"><button class="btn go" data-act="reload">Check again</button></div><div class="row"><button class="btn" data-act="resetseen">Show people I passed</button></div></div>`;
+  else{const p=deck[0];body=`<article class="card">${pic(p,'photo')}
+   <div class="who"><div class="name">${esc(p.name)} <small>${age(p)}</small></div><div class="near">${nearTxt(p)}</div><p style="margin:0;overflow-wrap:anywhere">${esc(p.bio)}</p>
+   <div class="row" style="margin-top:6px"><button class="btn" data-act="pass">Pass</button><button class="btn like" data-act="like">Like</button></div></div></article>`;}
+  const loc=prof.lat==null?`<div class="panel"><p class="muted">Turn on location to see who is closest. Others only see a rough distance.</p><div class="row"><button class="btn go" data-act="locate">Use my location</button></div></div>`:'';
+  return loc+body;
+}
+function vMatches(){
+  if(!matches.length)return `<div class="panel"><h1>No matches yet</h1><p class="muted">When you like someone and they like you back, they appear here and you can chat.</p></div>`;
+  return `<h1>Matches</h1><div class="list">${matches.map(m=>{const p=person(other(m));
+   return `<button class="item" data-act="open" data-id="${esc(m.id)}">${pic(p,'av')}<span><strong>${esc(p.name)}${age(p)?', '+age(p):''}</strong><p>${m.last?esc(m.last):'You matched. Say hello.'}</p></span></button>`;}).join('')}</div>`;
+}
+function vMe(){
+  return `<div class="panel"><div class="row" style="align-items:center">${pic(prof,'av')}<div><h1>${esc(prof.name)}, ${age(prof)}</h1><p class="muted">${esc(prof.district)}</p></div></div>
+   <div class="row"><button class="btn go" data-act="edit">Edit profile</button></div>
+   <div class="row"><button class="btn" data-act="locate">${prof.lat==null?'Use my location':'Update my location'}</button></div></div>
+  <div class="panel"><h1>Your safety</h1>
+   <div class="rule"><p><strong>Numbers are private.</strong> Share yours only when you choose, inside a chat.</p></div>
+   <div class="rule"><p><strong>Distance is rough.</strong> Nobody sees your exact location.</p></div>
+   <div class="rule"><p><strong>Meet in public.</strong> Choose a busy place for a first meeting and tell a friend where you are going.</p></div>
+   <div class="rule"><p><strong>Never send money</strong> to someone you have not met.</p></div></div>
+  <div class="panel"><div class="row"><button class="btn" data-act="signout">Sign out</button></div><div class="row"><button class="btn danger" data-act="askdelete">Delete my profile</button></div></div>`;
+}
+function msgsHtml(){
+  const p=person(other(matches.find(m=>m.id===chat)||{users:[me.uid]}));
+  return `<div class="m sys">You matched with ${esc(p.name)}. Chat here before sharing your number.</div>`+msgs.map(x=>`<div class="m ${x.from===me.uid?'me':''}">${esc(x.text)}</div>`).join('');
+}
+function vChat(){
+  const m=matches.find(x=>x.id===chat),p=person(other(m));
+  return `<div class="chathead"><button class="icon" data-act="back" aria-label="Back to matches">&larr;</button>${pic(p,'av sm')}<strong style="flex:1">${esc(p.name)}</strong><button class="icon" data-act="menu" aria-label="Chat options">&#8943;</button></div>
+  <div class="msgs" id="msgs">${msgsHtml()}</div>
+  <form class="send" id="sendform"><input id="msg" autocomplete="off" maxlength="1000" placeholder="Message" aria-label="Message"><button class="btn go" type="submit">Send</button></form>`;
+}
+function vSheet(){
+  if(!sheet)return '';
+  if(sheet.k==='match'){const p=person(sheet.id);return `<div class="veil"><div class="sheet"><p class="muted">You like each other</p><div class="matchname">${esc(p.name)} likes you too</div><div class="row"><button class="btn" data-act="close">Keep looking</button><button class="btn go" data-act="hello">Say hello</button></div></div></div>`;}
+  if(sheet.k==='menu'){const p=person(other(matches.find(x=>x.id===chat)));return `<div class="veil"><div class="sheet"><h1>${esc(p.name)}</h1><button class="btn" data-act="asknumber">Share my phone number</button><button class="btn" data-act="askreport">Report</button><button class="btn danger" data-act="block">Block</button><button class="btn go" data-act="close">Cancel</button></div></div>`;}
+  if(sheet.k==='number')return `<div class="veil"><form class="sheet" id="numform"><h1>Share your phone number</h1><p class="muted">It is sent as a message in this chat. Only share with someone you trust.</p><label for="num">Phone number<input id="num" inputmode="tel" maxlength="20" placeholder="07XX XXX XXX"></label><div class="row"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn go" type="submit">Send number</button></div></form></div>`;
+  if(sheet.k==='report')return `<div class="veil"><form class="sheet" id="repform"><h1>Report this person</h1><label for="reason">What happened<select id="reason"><option>Fake profile or scam</option><option>Asking for money</option><option>Harassment or threats</option><option>Looks under 18</option><option>Offensive photo or message</option><option>Something else</option></select></label><div class="row"><button class="btn" type="button" data-act="close">Cancel</button><button class="btn go" type="submit">Send report</button></div></form></div>`;
+  if(sheet.k==='delete')return `<div class="veil"><div class="sheet"><h1>Delete your profile?</h1><p class="muted">Your profile is removed and other people can no longer find you. This cannot be undone.</p><div class="row"><button class="btn" data-act="close">Keep my profile</button><button class="btn like" data-act="delete">Delete</button></div></div></div>`;
+  return '';
+}
+function render(){
+  let body;
+  if(view==='load')body=`<div class="welcome"><span class="logo">kumpi<i>.</i></span><p class="muted">Loading</p></div>`;
+  else if(view==='config')body=vConfig();
+  else if(view==='welcome')body=vWelcome();
+  else if(view==='setup')body=vSetup();
+  else if(tab==='chat'&&chat&&matches.some(m=>m.id===chat))body=vChat();
+  else{if(tab==='chat')tab='matches';
+    body=`<header><span class="logo">kumpi<i>.</i></span></header><main>${tab==='near'?vNear():tab==='matches'?vMatches():vMe()}</main>
+    <nav><button data-act="tnear" ${tab==='near'?'aria-current="page"':''}>Nearby</button><button data-act="tmatches" ${tab==='matches'?'aria-current="page"':''}>Matches${matches.length?`<span class="count">${matches.length}</span>`:''}</button><button data-act="tme" ${tab==='me'?'aria-current="page"':''}>Me</button></nav>`;}
+  const keep=$('msg')?$('msg').value:null,had=document.activeElement&&document.activeElement.id==='msg';
+  $('app').innerHTML=body+vSheet()+(toastMsg?`<div class="toast" role="status">${esc(toastMsg)}</div>`:'');
+  const i=$('msg');if(i&&keep!=null){i.value=keep;if(had&&!sheet)i.focus();}
+  const ms=$('msgs');if(ms)ms.scrollTop=ms.scrollHeight;
+}
+function renderMsgs(){const ms=$('msgs');if(ms){ms.innerHTML=msgsHtml();ms.scrollTop=ms.scrollHeight;}}
+
+/* ---------- data ---------- */
+async function ensure(id){
+  if(people.has(id))return;
+  try{const s=await getDoc(doc(db,'users',id));people.set(id,s.exists()?{id,...s.data()}:{id,name:'Deleted profile',district:''});}
+  catch(e){people.set(id,{id,name:'Unknown',district:''});}
+}
+async function loadDeck(){
+  deckLoading=true;render();
+  try{
+    const U=collection(db,'users'),add=(arr,s)=>s.docs.forEach(d=>{if(!arr.some(x=>x.id===d.id))arr.push({id:d.id,...d.data()});});
+    const arr=[];
+    add(arr,await getDocs(query(U,where('gender','==',prof.seeking),where('district','==',prof.district),limit(60))));
+    if(arr.length<10)add(arr,await getDocs(query(U,where('gender','==',prof.seeking),limit(60))));
+    arr.forEach(p=>people.set(p.id,p));
+    deck=arr.filter(p=>p.id!==me.uid&&p.seeking===prof.gender&&!seen.includes(p.id)&&!blocked.includes(p.id)&&!matches.some(m=>m.users.includes(p.id)));
+    deck.sort((a,b)=>(km(a)??9999)-(km(b)??9999));
+  }catch(e){console.error(e);toastMsg='Could not load people. Check your connection.';}
+  deckLoading=false;render();
+}
+function watchMatches(){
+  if(unsubMatches)unsubMatches();
+  unsubMatches=onSnapshot(query(collection(db,'matches'),where('users','array-contains',me.uid)),async snap=>{
+    const list=snap.docs.map(d=>({id:d.id,...d.data()})).filter(m=>!m.blockedBy);
+    await Promise.all(list.map(m=>ensure(other(m))));
+    const t=m=>(m.lastAt&&m.lastAt.toMillis?m.lastAt.toMillis():0)||(m.at&&m.at.toMillis?m.at.toMillis():0);
+    matches=list.sort((a,b)=>t(b)-t(a));
+    deck=deck.filter(p=>!matches.some(m=>m.users.includes(p.id)));
+    render();
+  },e=>console.error(e));
+}
+async function enter(){
+  loadSeen();
+  try{
+    const s=await getDoc(doc(db,'users',me.uid));
+    if(!s.exists()){prof=null;draft={name:(me.displayName||'').split(' ')[0].slice(0,24),dob:'',gender:'w',seeking:'m',district:'Kampala',bio:'',photo:''};view='setup';render();return;}
+    prof=s.data();
+    try{const b=await getDocs(collection(db,'users',me.uid,'blocks'));blocked=b.docs.map(d=>d.id);}catch(e){blocked=[];}
+    view='app';tab='near';watchMatches();loadDeck();
+  }catch(e){console.error(e);err='Could not load your profile. Check your connection and reload the page.';view='welcome';render();}
+}
+function leave(){if(unsubMatches)unsubMatches();if(unsubChat)unsubChat();unsubMatches=unsubChat=null;prof=null;deck=[];matches=[];chat=null;msgs=[];sheet=null;people.clear();}
+
+async function signin(){
+  busy=true;err='';render();
+  try{await signInWithPopup(auth,new GoogleAuthProvider());}
+  catch(e){console.error(e);
+    err=e.code==='auth/unauthorized-domain'?'This web address is not yet allowed in Firebase. Add it under Authentication, Settings, Authorized domains.'
+      :e.code==='auth/operation-not-allowed'?'Google sign-in is not switched on in Firebase yet.'
+      :e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request'?''
+      :e.code==='auth/popup-blocked'?'Your browser blocked the sign-in window. Allow pop-ups for this site and try again.'
+      :'Sign-in failed. Check your connection and try again.';}
+  busy=false;render();
+}
+function readDraft(){
+  draft.name=$('f-name').value.trim();if($('f-dob'))draft.dob=$('f-dob').value;
+  draft.gender=$('f-gender').value;draft.seeking=$('f-seeking').value;draft.district=$('f-district').value;draft.bio=$('f-bio').value.trim();
+}
+function yearsOld(dob){const b=new Date(dob+'T00:00:00'),n=new Date();let a=n.getFullYear()-b.getFullYear();if(n.getMonth()<b.getMonth()||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate()))a--;return a;}
+async function saveProfile(){
+  readDraft();err='';
+  let birthYear=prof?prof.birthYear:null;
+  if(!draft.name)err='Enter your first name.';
+  else if(!prof){
+    if(!draft.dob)err='Enter your date of birth.';
+    else{const a=yearsOld(draft.dob);if(!(a>=18))err='Kumpi is for adults aged 18 and over.';else if(a>99)err='Check your date of birth.';else birthYear=new Date(draft.dob+'T00:00:00').getFullYear();}
+  }
+  if(!err&&!PHOTO_OK.test(draft.photo||''))err='Add a photo of yourself.';
+  if(err){render();return;}
+  busy=true;render();
+  const data={name:draft.name,birthYear,gender:draft.gender,seeking:draft.seeking,district:draft.district,bio:draft.bio,photo:draft.photo,updatedAt:serverTimestamp()};
+  try{
+    await setDoc(doc(db,'users',me.uid),data,{merge:true});
+    const first=!prof;prof={...(prof||{}),...data};busy=false;view='app';
+    if(first){tab='near';watchMatches();}else tab='me';
+    loadDeck();
+  }catch(e){console.error(e);busy=false;err='Could not save. Check your connection and try again.';render();}
+}
+function pickPhoto(file){
+  if(!file)return;
+  const url=URL.createObjectURL(file),img=new Image();
+  img.onload=()=>{
+    const max=480,s=Math.min(1,max/Math.max(img.width,img.height)),c=document.createElement('canvas');
+    c.width=Math.round(img.width*s);c.height=Math.round(img.height*s);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+    readDraft();draft.photo=c.toDataURL('image/jpeg',0.7);err='';render();
+  };
+  img.onerror=()=>{URL.revokeObjectURL(url);readDraft();err='That file could not be read as a photo.';render();};
+  img.src=url;
+}
+function locate(){
+  if(!navigator.geolocation){toast('Location is not available on this phone.');return;}
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    const r=x=>+(Math.round(x/0.02)*0.02).toFixed(2),lat=r(pos.coords.latitude),lng=r(pos.coords.longitude);
+    try{await updateDoc(doc(db,'users',me.uid),{lat,lng});prof.lat=lat;prof.lng=lng;toastMsg='Location updated.';loadDeck();}
+    catch(e){console.error(e);toast('Could not save your location.');}
+  },()=>toast('Location was not allowed. People will see your district only.'),{enableHighAccuracy:false,timeout:15000,maximumAge:600000});
+}
+async function like(p){
+  markSeen(p.id);deck=deck.filter(x=>x.id!==p.id);render();
+  try{
+    await setDoc(doc(db,'likes',me.uid+'_'+p.id),{from:me.uid,to:p.id,at:serverTimestamp()});
+    const back=await getDoc(doc(db,'likes',p.id+'_'+me.uid));
+    if(back.exists()){
+      const u=[me.uid,p.id].sort();
+      await setDoc(doc(db,'matches',u[0]+'_'+u[1]),{users:u,at:serverTimestamp(),last:''},{merge:true});
+      sheet={k:'match',id:p.id,mid:u[0]+'_'+u[1]};render();
+    }else toast('Like sent.');
+  }catch(e){console.error(e);toast('Could not send your like. Check your connection.');}
+}
+function openChat(mid){
+  if(unsubChat)unsubChat();
+  chat=mid;tab='chat';msgs=[];sheet=null;render();
+  unsubChat=onSnapshot(query(collection(db,'matches',mid,'messages'),orderBy('at'),limitToLast(200)),s=>{msgs=s.docs.map(d=>d.data());renderMsgs();},e=>console.error(e));
+}
+function closeChat(){if(unsubChat)unsubChat();unsubChat=null;chat=null;msgs=[];tab='matches';}
+async function sendText(text){
+  const mid=chat;
+  try{
+    await addDoc(collection(db,'matches',mid,'messages'),{from:me.uid,text,at:serverTimestamp()});
+    updateDoc(doc(db,'matches',mid),{last:text.slice(0,60),lastAt:serverTimestamp()}).catch(()=>{});
+  }catch(e){console.error(e);toast('Message not sent. Check your connection.');}
+}
+async function block(){
+  const mid=chat,oid=other(matches.find(m=>m.id===mid));
+  try{
+    await updateDoc(doc(db,'matches',mid),{blockedBy:me.uid});
+    await setDoc(doc(db,'users',me.uid,'blocks',oid),{at:serverTimestamp()});
+    blocked.push(oid);closeChat();sheet=null;toast('Blocked. This chat is closed and you will not see each other again.');
+  }catch(e){console.error(e);toast('Could not block. Check your connection.');}
+}
+async function removeProfile(){
+  try{await deleteDoc(doc(db,'users',me.uid));leave();await signOut(auth);}
+  catch(e){console.error(e);sheet=null;toast('Could not delete. Check your connection.');}
+}
+
+/* ---------- events ---------- */
+function act(a,el){
+  switch(a){
+    case'signin':signin();return;
+    case'tnear':tab='near';break;case'tmatches':tab='matches';break;case'tme':tab='me';break;
+    case'pass':if(deck[0]){markSeen(deck[0].id);deck.shift();}break;
+    case'like':if(deck[0])like(deck[0]);return;
+    case'reload':loadDeck();return;
+    case'resetseen':seen=[];try{localStorage.removeItem('kumpi_seen_'+me.uid);}catch(e){}loadDeck();return;
+    case'locate':locate();return;
+    case'open':openChat(el.dataset.id);return;
+    case'hello':openChat(sheet.mid);return;
+    case'back':closeChat();break;
+    case'menu':sheet={k:'menu'};break;
+    case'asknumber':sheet={k:'number'};break;
+    case'askreport':sheet={k:'report'};break;
+    case'block':block();return;
+    case'close':sheet=null;break;
+    case'edit':draft={name:prof.name,dob:'',gender:prof.gender,seeking:prof.seeking,district:prof.district,bio:prof.bio||'',photo:prof.photo||''};err='';view='setup';break;
+    case'canceledit':err='';view='app';tab='me';break;
+    case'signout':leave();signOut(auth);return;
+    case'askdelete':sheet={k:'delete'};break;
+    case'delete':removeProfile();return;
+  }
+  render();
+}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-act]');if(el)act(el.dataset.act,el);});
+document.addEventListener('change',e=>{if(e.target.id==='f-photo')pickPhoto(e.target.files[0]);});
+document.addEventListener('submit',async e=>{
+  e.preventDefault();
+  const id=e.target.id;
+  if(id==='setup'){if(!busy)saveProfile();}
+  else if(id==='sendform'){const t=$('msg').value.trim();if(!t)return;$('msg').value='';$('msg').focus();sendText(t);}
+  else if(id==='numform'){const n=$('num').value.trim();if(!n)return;sheet=null;render();sendText('My number: '+n);}
+  else if(id==='repform'){
+    const reason=$('reason').value,mid=chat,oid=other(matches.find(m=>m.id===mid));sheet=null;
+    try{await addDoc(collection(db,'reports'),{from:me.uid,about:oid,match:mid,reason,at:serverTimestamp()});toast('Report sent. Thank you.');}
+    catch(x){console.error(x);toast('Could not send the report. Check your connection.');}
+  }
+});
+
+/* ---------- start ---------- */
+window.kumpiStarted=true;
+if(firebaseConfig.apiKey.startsWith('PASTE')){view='config';render();}
+else{
+  const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);
+  onAuthStateChanged(auth,u=>{
+    if(u){me=u;err='';enter();}
+    else{me=null;leave();view='welcome';render();}
+  });
+}
+</script>
+</body>
+</html>
